@@ -1,5 +1,5 @@
 import openapi from "@elysia/openapi";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 
 const campaigns = [
   {
@@ -22,12 +22,27 @@ const app = new Elysia({"prefix": "/api/v1"})
     return {data: campaigns}
   })
   .get("/campaigns/:id", ({params: {id}, status}) => {
-    const campaign = campaigns.find((c) => c.campaignId == Number(id))
+    const campaign = campaigns.find((c) => c.campaignId == id)
     if (!campaign){
       return status(404)
     }
     return {data: campaign}
+  }, {
+    params: t.Object({ id: t.Number()})
   })
+
+  /*
+  {
+    params: t.Object({ id: t.Number() }),
+    query: t.Object({ limit: t.Optional(t.Number()) }),
+    body: t.Object({
+        name: t.String(),
+        dueDate: t.Optional(t.String())
+    })
+}
+  */
+
+
   .get("/", () => "Hello Caleb!")
   .listen(3000);
 
