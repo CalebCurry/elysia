@@ -19,6 +19,13 @@ const app = new Elysia({"prefix": "/api/v1"})
   .get("/campaigns", () => {
     return {data: campaigns}
   })
+  .get("/campaigns/:id", ({params: {id}, status}) => {
+    const campaign = campaigns.find((c) => c.campaignId == Number(id))
+    if (!campaign){
+      return status(404)
+    }
+    return {data: campaign}
+  })
   .get("/", () => "Hello Caleb!")
   .listen(3000);
 
