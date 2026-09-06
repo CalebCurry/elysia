@@ -1,3 +1,4 @@
+import openapi from "@elysia/openapi";
 import { Elysia } from "elysia";
 
 const campaigns = [
@@ -16,6 +17,7 @@ const campaigns = [
 ]
 
 const app = new Elysia({"prefix": "/api/v1"})
+  .use(openapi())
   .get("/campaigns", () => {
     return {data: campaigns}
   })
