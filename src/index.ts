@@ -48,9 +48,23 @@ const app = new Elysia({"prefix": "/api/v1"})
   .delete('/campaigns/:id', ({params: {id}, status}) => {
     const {changes} = db.run('DELETE FROM campaigns WHERE campaign_id = ?', [id])
     if (changes === 0) return status(404)
-    return 204
+    return status(204)
   }, { params: t.Object({ id: t.Number()})})
+  .put('/campaigns/:id', ({ params: { id }, body, status }) => {
+        const campaign = db.query(
+            `UPDATE campaigns SET name = ?, due_date = ? WHERE campaign_id = ?
+             RETURNING campaign_id AS campaignId, name, due_date AS dueDate, created_at AS createdAt`
+        ).get(body.name, body.dueDate ?? null, id)
 
+        if (!campaign) return status(404)
+        return { data: campaign }
+    }, {
+        params: t.Object({ id: t.Number() }),
+        body: t.Object({
+            name: t.String(),
+            dueDate: t.Optional(t.String())
+        })
+    })
   /*
   {
     params: t.Object({ id: t.Number() }),
