@@ -1,28 +1,31 @@
 import openapi from "@elysia/openapi";
 import { Elysia, t } from "elysia";
+import { Database } from "bun:sqlite"
 
-const campaigns = [
-  {
-    campaignId: 1,
-    name: "Summer Sale",
-    dueDate: new Date(),
-    createdAt: new Date()
-  },
-  {
-    campaignId: 2,
-    name: "Black Friday",
-    dueDate: new Date(),
-    createdAt: new Date()
-  }
-]
+const db = new Database('campaigns.db')
+
+db.run(`
+    CREATE TABLE IF NOT EXISTS campaigns (
+      campaign_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      due_date TEXT,
+      created_at TEXT NOT NULL
+    )
+`)
+
+if(!db.query('SELECT 1 FROM campaigns').get()){
+  db.run(`INSERT INTO campaigns (name, created_at) VALUES (?, ?)`, ["Cyber Monday", new Date().toISOString()])
+}
+
+
 
 const app = new Elysia({"prefix": "/api/v1"})
   .use(openapi())
   .get("/campaigns", () => {
-    return {data: campaigns}
+    return { data: db.query('SELECT campaign_id AS campaignId, name, due_date AS dueDate, created_at AS createdAt FROM campaigns').all() }
   })
   .get("/campaigns/:id", ({params: {id}, status}) => {
-    const campaign = campaigns.find((c) => c.campaignId == id)
+    const campaign = db.query('SELECT campaign_id AS campaignId, name, due_date AS dueDate, created_at AS createdAt FROM campaigns WHERE campaign_id = ?').get(id)
     if (!campaign){
       return status(404)
     }
@@ -39,7 +42,7 @@ const app = new Elysia({"prefix": "/api/v1"})
         name: t.String(),
         dueDate: t.Optional(t.String())
     })
-}
+  } 
   */
 
 
