@@ -33,6 +33,23 @@ const app = new Elysia({"prefix": "/api/v1"})
   }, {
     params: t.Object({ id: t.Number()})
   })
+  .post("/campaigns", ({body, status}) => {
+    const campaign = db.query(`
+      INSERT INTO campaigns (name, due_date, created_at)
+      VALUES (?,?,?)
+      RETURNING campaign_id AS campaignId, name, due_date AS dueDate, created_at AS createdAt  
+    `).get(body.name, body.dueDate ?? null, new Date().toISOString())
+
+    return status(201, {data: campaign})
+  }, {body: t.Object({
+    name: t.String(),
+    dueDate: t.Optional(t.String( { format: 'date'}))
+  })})
+  .delete('/campaigns/:id', ({params: {id}, status}) => {
+    const {changes} = db.run('DELETE FROM campaigns WHERE campaign_id = ?', [id])
+    if (changes === 0) return status(404)
+    return 204
+  }, { params: t.Object({ id: t.Number()})})
 
   /*
   {
