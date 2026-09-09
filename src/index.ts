@@ -7,6 +7,7 @@ import { campaigns } from './schema';
 import * as schema from './schema'
 import { createInsertSchema } from 'drizzle-typebox';
 
+//needed for drizzle orm
 const db = drizzle(process.env.DATABASE_URL!, { schema, casing: "snake_case"})
 
 const _insertCampaign = createInsertSchema(campaigns)

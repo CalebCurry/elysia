@@ -1,3 +1,5 @@
+// needed for drizzle kit (CLI)
+
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
