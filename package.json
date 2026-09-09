@@ -7,10 +7,14 @@
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.16",
+    "drizzle-orm": "^0.45.2",
+    "drizzle-typebox": "^0.3.3",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "drizzle-kit": "^0.31.10",
+    "pg": "^8.23.0"
   },
   "module": "src/index.js"
 }
